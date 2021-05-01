@@ -1,0 +1,58 @@
+extends layout.pug
+block content
+    .row.justify-content-center
+        .col
+            h1.text-center Anonymous Message Board
+    hr
+    .row.justify-content-center
+        each board in boards
+            .col.text-center
+                a.btn.btn-primary(href=`/b/${board}/` title=`Board: ${board}`)= board
+    hr
+    .row.justify-content-center
+        .col
+            h2.text-center Test API responses
+    .row.justify-content-center 
+        .col-md-4
+            h3 New thread (POST /api/threads/:board)
+            form#newThread(onsubmit="newThread(event);")
+                input.form-control.mb-3(type='text' placeholder='board' id='board1' name='board' required)
+                textarea.form-control.mb-3(type='text' placeholder='Thread text...' name='text' required rows="5")
+                input.form-control.mb-3(type='password' placeholder='password to delete' name='delete_password' required)
+                input.btn.btn-success(type="submit" value="Submit")
+        .col-md-4
+            h3 Report thread (PUT /api/threads/:board)
+            form#reportThread(onsubmit="reportThread(event);")
+                input.form-control.mb-3(type='text' placeholder='board' id='board2' name='board' required)
+                input.form-control.mb-3(type='text' placeholder='thread id' name='thread_id' required)
+                input.btn.btn-warning(type="submit" value="Submit")
+        .col-md-4
+            h3 Delete thread (DELETE /api/threads/:board)
+            form#deleteThread(onsubmit="deleteThread(event);")
+                input.form-control.mb-3(type='text' placeholder='board' id='board3' name='board' required)
+                input.form-control.mb-3(type='text' placeholder='thread id' name='thread_id' required)
+                input.form-control.mb-3(type='password' placeholder='password to delete' name='delete_password' required)
+                input.btn.btn-danger(type="submit" value="Submit")
+        .col-md-4
+            h3 New reply (POST /api/replies/:board)
+            form#newReply(onsubmit="newReply(event);")
+                input.form-control.mb-3(type='text' placeholder='board' id='board4' name='board' required)
+                input.form-control.mb-3(type='text' placeholder='thread id' name='thread_id' required)
+                textarea.form-control.mb-3(type='text' placeholder='Reply text...' name='text' required rows="5")
+                input.form-control.mb-3(type='password' placeholder='password to delete' name='delete_password' required)
+                input.btn.btn-success(type="submit" value="Submit")
+        .col-md-4
+            h3 Report reply (PUT /api/replies/:board)
+            form#reportReply(onsubmit="reportReply(event);")
+                input.form-control.mb-3(type='text' placeholder='board' id='board5' name='board' required)
+                input.form-control.mb-3(type='text' placeholder='thread id' name='thread_id' required)
+                input.form-control.mb-3(type='text' placeholder='reply message id' name='reply_id' required)
+                input.btn.btn-warning(type="submit" value="Submit")
+        .col-md-4
+            h3 Delete reply (DELETE /api/replies/:board)
+            form#deleteReply(onsubmit="deleteReply(event);")
+                input.form-control.mb-3(type='text' placeholder='board' id='board6' name='board' required)
+                input.form-control.mb-3(type='text' placeholder='thread id' name='thread_id' required)
+                input.form-control.mb-3(type='text' placeholder='reply message id' name='reply_id' required)
+                input.form-control.mb-3(type='password' placeholder='password to delete' name='delete_password' required)
+                input.btn.btn-danger(type="submit" value="Submit")

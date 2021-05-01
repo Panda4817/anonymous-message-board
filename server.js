@@ -15,6 +15,7 @@ app.use(helmet.frameguard({ action: "deny" }))
 app.use(helmet.dnsPrefetchControl());
 app.use(helmet.referrerPolicy({ policy: "same-origin" }));
 
+app.set('view engine', 'pug')
 app.use(
 	"/public",
 	express.static(process.cwd() + "/public")

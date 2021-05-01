@@ -14,7 +14,18 @@ module.exports = function (app, db) {
 
 	//Index page (static HTML)
 	app.route("/").get(function (req, res) {
-		res.sendFile(process.cwd() + "/views/index.html");
+		//res.sendFile(process.cwd() + "/views/index.html");
+		db.find({}).toArray((err, result) => {
+			const boards = []
+			result.map(doc => {
+				if (boards.indexOf(doc.board) < 0){
+					boards.push(doc.board)
+				}
+				return;
+			})
+			res.render("index.pug", {boards: boards})
+		})
+		
 	});
 
 	app

@@ -16,7 +16,8 @@
 		"helmet": "^4.5.0",
 		"mocha": "^8.3.2",
 		"mongodb": "^3.6.6",
-		"nodemon": "^2.0.7"
+		"nodemon": "^2.0.7",
+		"pug": "^3.0.2"
 	},
 	"repository": {
 		"type": "git",
