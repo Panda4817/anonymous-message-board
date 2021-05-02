@@ -68,7 +68,7 @@ module.exports = function (app, db) {
 		.route("/api/threads/:board")
 		.post(async (req, res) => {
 			console.log(req.body)
-			const board = req.body.board;
+			const board = req.params.board;
 			const text = req.body.text;
 			const delete_password = req.body.delete_password;
 			const hash = bcrypt.hashSync(
@@ -88,8 +88,10 @@ module.exports = function (app, db) {
 			res.redirect(`../../../b/${board}`);
 		})
 		.get(async (req, res) => {
+			console.log(req.params)
 			const board = req.params.board;
 			const result = await get_threads(board);
+			console.log(result)
 			res.json(result);
 		})
 		.put((req, res) => {
