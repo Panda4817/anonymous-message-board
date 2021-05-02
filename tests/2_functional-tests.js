@@ -8,6 +8,7 @@ chai.use(chaiHttp);
 suite("Functional Tests", function () {
     let thread_id = null
     let reply_id = null
+	this.timeout(5000);
 	test("Creating a new thread: POST request to /api/threads/{board}", function (done) {
             chai
 			.request(app)
