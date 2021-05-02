@@ -1,4 +1,4 @@
-body {
+body, .modal-content {
   padding: 10px;
   background-color: #011f4b;
   color: #e75480;
@@ -15,5 +15,9 @@ body {
 
 .thread {
   background-color: #012964;
+}
+
+.btn-close {
+  background-color: white;
 }
 

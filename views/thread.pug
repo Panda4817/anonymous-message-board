@@ -32,7 +32,7 @@ block content
                             input.btn.btn-outline-light(type="submit" value="Report" disabled= reply.text == '[deleted]' ? true : false)
                         button.btn.btn-outline-light.d-inline.m-1(type="button" data-bs-toggle="modal" data-bs-target="#modal" + reply._id disabled= reply.text == '[deleted]' ? true : false)= "Delete"
                 .modal.fade(id="modal" + reply._id tabindex="-1")
-                    .modal-dialog.modal-dialog-centered 
+                    .modal-dialog.modal-dialog-centered.modal-lg 
                         .modal-content 
                             .modal-header 
                                 h3.modal-title= "Are you sure you want delete this reply?"
@@ -51,7 +51,7 @@ block content
                 input.form-control.mb-3(type='password' placeholder='password to delete' name='delete_password' required)
                 input.btn.btn-outline-light(type="submit" value="Reply")
     .modal.fade(id="modal" + thread._id tabindex="-1")
-        .modal-dialog.modal-dialog-centered
+        .modal-dialog.modal-dialog-centered.modal-lg
             .modal-content 
                 .modal-header 
                     h3.modal-title= "Are you sure you want delete this thread?"
