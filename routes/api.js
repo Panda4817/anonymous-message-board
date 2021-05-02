@@ -4,6 +4,23 @@ const bcrypt = require("bcrypt");
 const saltRounds = 12;
 
 module.exports = function (app, db) {
+	const get_threads = async (board) => {
+		const result = await db
+			.find(
+				{ board: board },
+				{
+					sort: { bumped_on: -1 },
+					projection: {
+						replies: { $slice: 3 },
+						reported: 0,
+						delete_password: 0,
+					},
+				}
+			)
+			.limit(10)
+			.toArray();
+		return result;
+	};
 	//Sample front-end
 	app.route("/b/:board/").get(function (req, res) {
 		res.sendFile(process.cwd() + "/views/board.html");
@@ -16,16 +33,15 @@ module.exports = function (app, db) {
 	app.route("/").get(function (req, res) {
 		//res.sendFile(process.cwd() + "/views/index.html");
 		db.find({}).toArray((err, result) => {
-			const boards = []
-			result.map(doc => {
-				if (boards.indexOf(doc.board) < 0){
-					boards.push(doc.board)
+			const boards = [];
+			result.map((doc) => {
+				if (boards.indexOf(doc.board) < 0) {
+					boards.push(doc.board);
 				}
 				return;
-			})
-			res.render("index.pug", {boards: boards})
-		})
-		
+			});
+			res.render("index.pug", { boards: boards });
+		});
 	});
 
 	app
@@ -50,23 +66,25 @@ module.exports = function (app, db) {
 			});
 			res.redirect(`../../../b/${board}/`);
 		})
-		.get((req, res) => {
+		.get(async (req, res) => {
 			const board = req.params.board;
-			db.find(
-				{ board: board },
-				{
-					sort: { bumped_on: -1 },
-					projection: {
-						replies: { $slice: 3 },
-						reported: 0,
-						delete_password: 0,
-					},
-				}
-			)
-				.limit(10)
-				.toArray((err, result) => {
-					res.json(result);
-				});
+			const result = await get_threads(board);
+			res.json(result);
+			// db.find(
+			// 	{ board: board },
+			// 	{
+			// 		sort: { bumped_on: -1 },
+			// 		projection: {
+			// 			replies: { $slice: 3 },
+			// 			reported: 0,
+			// 			delete_password: 0,
+			// 		},
+			// 	}
+			// )
+			// 	.limit(10)
+			// 	.toArray((err, result) => {
+			// 		res.json(result);
+			// 	});
 		})
 		.put((req, res) => {
 			const thread_id = req.body.thread_id;
@@ -189,7 +207,7 @@ module.exports = function (app, db) {
 							},
 							{
 								$set: {
-									"replies.$.text":  "[deleted]",
+									"replies.$.text": "[deleted]",
 								},
 								$inc: { reply_count: -1 },
 							},
