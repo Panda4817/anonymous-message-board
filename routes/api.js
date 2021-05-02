@@ -21,12 +21,32 @@ module.exports = function (app, db) {
 			.toArray();
 		return result;
 	};
+
+	const get_all_replies = async (thread_id) => {
+		const result = await db.findOne(
+			{ _id: new ObjectId(thread_id) },
+			{
+				projection: { reported: 0, delete_password: 0 },
+			});
+		return result
+	}
 	//Sample front-end
-	app.route("/b/:board/").get(function (req, res) {
-		res.sendFile(process.cwd() + "/views/board.html");
+	app.route("/b/:board").get(async function (req, res) {
+		const board = req.params.board;
+		const result = await get_threads(board);
+		res.render("board.pug", {
+			threads: result,
+			board: board
+		})
 	});
-	app.route("/b/:board/:threadid").get(function (req, res) {
-		res.sendFile(process.cwd() + "/views/thread.html");
+	app.route("/b/:board/:thread_id/").get(async function (req, res) {
+		const thread_id = req.params.thread_id;
+		const board = req.params.board;
+		const result = await get_all_replies(thread_id);
+		res.render("thread.pug", {
+			thread: result,
+			board: board
+		})
 	});
 
 	//Index page (static HTML)
@@ -64,27 +84,12 @@ module.exports = function (app, db) {
 				reported: false,
 				reply_count: 0,
 			});
-			res.redirect(`../../../b/${board}/`);
+			res.redirect(`../../../b/${board}`);
 		})
 		.get(async (req, res) => {
 			const board = req.params.board;
 			const result = await get_threads(board);
 			res.json(result);
-			// db.find(
-			// 	{ board: board },
-			// 	{
-			// 		sort: { bumped_on: -1 },
-			// 		projection: {
-			// 			replies: { $slice: 3 },
-			// 			reported: 0,
-			// 			delete_password: 0,
-			// 		},
-			// 	}
-			// )
-			// 	.limit(10)
-			// 	.toArray((err, result) => {
-			// 		res.json(result);
-			// 	});
 		})
 		.put((req, res) => {
 			const thread_id = req.body.thread_id;
@@ -155,19 +160,12 @@ module.exports = function (app, db) {
 				{ returnOriginal: false }
 			);
 
-			res.redirect(`../../../b/${board}/${thread_id}`);
+			res.redirect(`../../../b/${board}/${thread_id}/`);
 		})
-		.get((req, res) => {
+		.get(async (req, res) => {
 			const thread_id = req.query.thread_id;
-			db.findOne(
-				{ _id: new ObjectId(thread_id) },
-				{
-					projection: { reported: 0, delete_password: 0 },
-				},
-				(err, result) => {
-					res.json(result);
-				}
-			);
+			const result = await get_all_replies(thread_id)
+			res.json(result);
 		})
 		.put((req, res) => {
 			const thread_id = req.body.thread_id;
@@ -199,7 +197,8 @@ module.exports = function (app, db) {
 						delete_password,
 						result.replies[0].delete_password
 					);
-					if (isRight) {
+					const alreadyDeleted = result.replies[0].text != "[deleted]"
+					if (isRight && alreadyDeleted) {
 						db.findOneAndUpdate(
 							{
 								_id: new ObjectId(thread_id),

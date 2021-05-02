@@ -1,36 +1,19 @@
-* {
-  margin: 0px;
-  padding: 0px;
-}
-
 body {
   padding: 10px;
+  background-color: #011f4b;
+  color: #e75480;
 }
 
-.replies {
-  margin-left: 50px;
+.card-header, .reply {
+  background-color: #011f4b;
+  color: white;
 }
-
-.reply {
-  border: 1px dotted black;
-  margin: 5px;
-  padding: 5px;
-}
-
-.newReply {
-  margin: 10px 5px 10px 5px;
+.card-body {
+  background-color: #e75480;
+  color: white;
 }
 
 .thread {
-  border: 2px solid black;
-  padding: 5px;
-  margin-bottom: 5px;
+  background-color: #012964;
 }
 
-.id {
-  font-size: 10.5px;
-}
-
-#submitNewThread {
-  margin: 50px;
-}

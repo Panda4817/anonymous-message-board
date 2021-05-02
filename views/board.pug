@@ -1,0 +1,79 @@
+extends layout.pug 
+block content 
+    .row.justify-content-center
+        .col
+            h1.text-center Message Board: #{board}
+    .d-grid.gap-2.d-md-flex.justify-content-md-end.mb-3
+            a.btn.btn-outline-light(href=`/`) Back to all message boards and API
+    .row.mb-3 
+        .col
+            h2 Create new thread
+            form#newThread(onsubmit="newThread(event);")
+                input.form-control.mb-3(type='text' placeholder='board' id='board1' name='board' required value=`${board}`)
+                textarea.form-control.mb-3(type='text' placeholder='Thread text...' name='text' required rows="5")
+                input.form-control.mb-3(type='password' placeholder='password to delete' name='delete_password' required)
+                input.btn.btn-outline-light(type="submit" value="Create")
+    .row
+        .col
+            h2 Recent threads
+    each thread in threads
+        .card.mb-3 
+            .card-header
+                .row.justify-content-between 
+                    .col
+                        p.d-inline= thread.created_on.toDateString() != new Date().toDateString() ? thread.created_on.toDateString() : thread.created_on.toLocaleTimeString() + ' Today'
+                    .col-xl-1.col-md-2
+                        p.d-inline= thread.reply_count > 1 || thread.reply_count == 0 ? thread.reply_count + " replies" : thread.reply_count + " reply"
+            .card-body 
+                h3.card-title= thread.text 
+                a.btn.btn-outline-light.d-inline.m-1(href=`/b/${board}/${thread._id}`)= 'All replies'
+                form.d-inline.m-1#reportThread(onsubmit="reportThread(event);")
+                    input.form-control.mb-3.d-none(type='text' placeholder='board' id='board2' name='board' required value=`${board}`)
+                    input.form-control.mb-3.d-none(type='text' placeholder='thread id' name='thread_id' required value= thread._id)
+                    input.btn.btn-outline-light(type="submit" value="Report")
+                button.btn.btn-outline-light.d-inline.m-1(type="button" data-bs-toggle="modal" data-bs-target="#modal" + thread._id)= "Delete"
+            .card-footer.thread 
+                each reply in thread.replies 
+                    .card.mb-3.text-right
+                        .card-header 
+                            p.d-inline= reply.created_on.toDateString() != new Date().toDateString() ? reply.created_on.toDateString() : reply.created_on.toLocaleTimeString() + ' Today'
+                        .card-body 
+                            p.lead.card-title= reply.text
+                        .card-footer.reply 
+                            form.d-inline.m-1#reportReply(onsubmit="reportReply(event);")
+                                input.form-control.mb-3.d-none(type='text' placeholder='board' id='board2' name='board' required value=`${board}`)
+                                input.form-control.mb-3.d-none(type='text' placeholder='thread id' name='thread_id' required value= thread._id)
+                                input.form-control.mb-3.d-none(type='text' placeholder='reply message id' name='reply_id' required value= reply._id)
+                                input.btn.btn-outline-light(type="submit" value="Report" disabled= reply.text == '[deleted]' ? true : false)
+                            button.btn.btn-outline-light.d-inline.m-1(type="button" data-bs-toggle="modal" data-bs-target="#modal" + reply._id disabled= reply.text == '[deleted]' ? true : false)= "Delete"
+                    .modal.fade(id="modal" + reply._id tabindex="-1")
+                        .modal-dialog.modal-dialog-centered 
+                            .modal-content 
+                                .modal-header 
+                                    h3.modal-title= "Are you sure you want delete this reply?"
+                                    button.btn-close(type="button" data-bs-dismiss="modal")
+                                .modal-body 
+                                    form#deleteReply(onsubmit="deleteReply(event);")
+                                        input.form-control.mb-3.d-none(type='text' placeholder='board' id='board3' name='board' required value=`${board}`)
+                                        input.form-control.mb-3.d-none(type='text' placeholder='thread id' name='thread_id' required value= thread._id)
+                                        input.form-control.mb-3.d-none(type='text' placeholder='reply message id' name='reply_id' required value= reply._id)
+                                        input.form-control.mb-3(type='password' placeholder='password to delete' name='delete_password' required)
+                                        input.btn.btn-outline-light(type="submit" value="Yes, delete it!")
+                form#newReply(onsubmit="newReply(event);")
+                    input.form-control.mb-3.d-none(type='text' placeholder='board' id='board4' name='board' required value=`${board}`)
+                    input.form-control.mb-3.d-none(type='text' placeholder='thread id' name='thread_id' required value= thread._id)
+                    textarea.form-control.mb-3(type='text' placeholder='Add a new reply' name='text' required rows="5")
+                    input.form-control.mb-3(type='password' placeholder='password to delete' name='delete_password' required)
+                    input.btn.btn-outline-light(type="submit" value="Reply")
+        .modal.fade(id="modal" + thread._id tabindex="-1")
+            .modal-dialog.modal-dialog-centered
+                .modal-content 
+                    .modal-header 
+                        h3.modal-title= "Are you sure you want delete this thread?"
+                        button.btn-close(type="button" data-bs-dismiss="modal")
+                    .modal-body 
+                        form#deleteThread(onsubmit="deleteThread(event);")
+                            input.form-control.mb-3.d-none(type='text' placeholder='board' id='board3' name='board' required value=`${board}`)
+                            input.form-control.mb-3.d-none(type='text' placeholder='thread id' name='thread_id' required value= thread._id)
+                            input.form-control.mb-3(type='password' placeholder='password to delete' name='delete_password' required)
+                            input.btn.btn-outline-light(type="submit" value="Yes, delete it!")
