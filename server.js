@@ -11,7 +11,7 @@ const runner = require("./test-runner");
 
 const app = express();
 
-app.use(helmet.frameguard({ action: "deny" }))
+app.use(helmet.frameguard({ action: "SAMEORIGIN" }))
 app.use(helmet.dnsPrefetchControl());
 app.use(helmet.referrerPolicy({ policy: "same-origin" }));
 
