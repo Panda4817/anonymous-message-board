@@ -67,6 +67,7 @@ module.exports = function (app, db) {
 	app
 		.route("/api/threads/:board")
 		.post(async (req, res) => {
+			console.log(req.body)
 			const board = req.body.board;
 			const text = req.body.text;
 			const delete_password = req.body.delete_password;
