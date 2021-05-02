@@ -9,7 +9,6 @@ suite("Functional Tests", function () {
     let thread_id = null
     let reply_id = null
 	test("Creating a new thread: POST request to /api/threads/{board}", function (done) {
-        db.deleteMany({}, () => {
             chai
 			.request(app)
 			.post(`/api/threads/test`)
@@ -26,7 +25,6 @@ suite("Functional Tests", function () {
                 const result = await db.find({}, {sort: {created_on: -1}}).limit(1).toArray();
                 thread_id = result[0]._id
 				done();
-			});
         })
 		
 	});
@@ -67,16 +65,15 @@ suite("Functional Tests", function () {
 				text: "new reply",
 				delete_password: "password",
 			})
-			.end(function (err, res) {
+			.end(async function (err, res) {
 				assert.equal(res.status, 200);
 				assert.isObject(
 					res.body,
 					"response should be an object"
 				);
-                db.find({}, {sort: {created_on: -1}}).limit(1).toArray((err, result) => {
-                    reply_id = result[0].replies[0]._id
-                    done();
-                });
+                const result =  await db.find({}, {sort: {created_on: -1}}).limit(1).toArray()
+                reply_id = result[0].replies[0]._id
+                done();
 			});
 		
 	});
